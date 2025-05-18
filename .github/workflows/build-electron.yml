@@ -38,11 +38,19 @@ jobs:
         with:
           ref: ${{ inputs.commit || github.sha }}
 
+      # 关键修改：补充编译依赖
       - name: Install system dependencies
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install npm wine32
+          sudo apt-get install -y \
+            npm \
+            wine32 \
+            build-essential \
+            python3 \
+            libxi-dev \
+            libgl1-mesa-dev \
+            libpng-dev
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
@@ -90,8 +98,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.1.1
 
+      # macOS 补充依赖
       - name: Install system dependencies
-        run: brew install node
+        run: |
+          brew install node
+          brew install pkg-config cairo pango libpng jpeg giflib
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
